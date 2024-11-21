@@ -77,9 +77,6 @@ class CustomerTest {
         // null if there is no such key.
         Map.Entry<Customer, String> middleScore = customerService.getNext(new Customer(10, "Key",
                 20));
-
-
-        // подсказка не помогла. ключа с id 10 не существует и получаем null
         assertThat(middleScore.getKey()).isEqualTo(customer1);
         middleScore.getKey().setScores(10000);
         middleScore.getKey().setName("Vasy");

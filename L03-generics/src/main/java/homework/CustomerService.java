@@ -2,11 +2,11 @@ package homework;
 
 import java.util.Comparator;
 import java.util.Map;
-import java.util.SortedMap;
+import java.util.NavigableMap;
 import java.util.TreeMap;
 
 public class CustomerService {
-    SortedMap<Customer, String> customersTreeMap =
+    private final NavigableMap<Customer, String> customersTreeMap =
             new TreeMap<>(Comparator.comparingLong(Customer::getScores));
 
     // todo: 3. надо реализовать методы этого класса
@@ -22,7 +22,13 @@ public class CustomerService {
     }
 
     public Map.Entry<Customer, String> getNext(Customer customer) {
-        return customersTreeMap.entrySet().stream().filter(customerStringEntry -> customerStringEntry.getKey().equals(customer)).findFirst().orElse(null);
+        if (customersTreeMap.higherKey(customer) != null) {
+            return Map.entry(new Customer(customersTreeMap.higherKey(customer).getId(),
+                            customersTreeMap.higherKey(customer).getName(),
+                            customersTreeMap.higherKey(customer).getScores()),
+                    customersTreeMap.higherEntry(customer).getValue());
+        }
+        return null;
     }
 
     public void add(Customer customer, String data) {
