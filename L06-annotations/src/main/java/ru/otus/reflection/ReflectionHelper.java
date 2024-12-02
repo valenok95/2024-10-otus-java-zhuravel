@@ -1,18 +1,26 @@
 package ru.otus.reflection;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings({"java:S3011", "java:S112"})
 public class ReflectionHelper {
-    private ReflectionHelper() {}
+    private static final Logger logger
+            = LoggerFactory.getLogger(ReflectionHelper.class);
 
-    public static Object callMethod(Object object, String name, Object... args) {
+    private ReflectionHelper() {
+    }
+
+    public static boolean callMethodAndCheckSuccess(Object object, Method method, Object... args) {
         try {
-            var method = object.getClass().getDeclaredMethod(name, toClasses(args));
             method.setAccessible(true);
-            return method.invoke(object, args);
+            method.invoke(object, args);
+            return true;
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            logger.error("invoke method error", e);
+            return false;
         }
     }
 

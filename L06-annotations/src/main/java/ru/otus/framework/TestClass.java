@@ -9,23 +9,27 @@ import ru.otus.framework.annotations.Test;
 public class TestClass {
     private static final Logger logger
             = LoggerFactory.getLogger(TestClass.class);
-@Before
+
+    @Before
     void setUp() {
         logger.info("setting up before each test");
+
     }
-@After
+
+    @After
     void shutDown() {
         logger.info("shut down after each test");
     }
 
-@Test
+    @Test
     void someTest() {
         var result = 10 / 2;
         if (result != 5) {
             throw new ArithmeticException("Wrong Math");
         }
     }
-@Test
+
+    @Test
     void anotherTest() {
         var result = 10 / 0;
         if (result != 5) {
