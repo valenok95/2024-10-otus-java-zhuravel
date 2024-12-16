@@ -16,7 +16,6 @@ public class TestLogging implements TestLoggingInterface {
     }
 
     @Override
-    @Log
     public void calculation(int paramFirst, int paramSecond) {
         logger.info("{} + {}  = {}", paramFirst, paramSecond, paramFirst + paramSecond);
     }
