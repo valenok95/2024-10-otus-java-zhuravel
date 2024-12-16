@@ -10,7 +10,6 @@ public class TestLogging implements TestLoggingInterface {
             = LoggerFactory.getLogger(TestLogging.class);
 
     @Override
-    @Log
     public void calculation(int param) {
         logger.info("{} + 0  = {}", param, param);
     }

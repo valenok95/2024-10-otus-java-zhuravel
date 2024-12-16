@@ -1,6 +1,7 @@
 package ru.otus.homework.demo;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
@@ -19,44 +20,46 @@ public class Ioc {
     private Ioc() {
     }
 
-    static TestLoggingInterface createMyClass() {
-        InvocationHandler handler = new Ioc.DemoInvocationHandler(new TestLogging());
-        return (TestLoggingInterface)
-                Proxy.newProxyInstance(Ioc.class.getClassLoader(), new Class<?>[]{TestLoggingInterface.class}, handler);
+    static <T> T createMyClass(Class<T> myInterface) {
+        InvocationHandler handler = new Ioc.DemoInvocationHandler(myInterface);
+
+        // запоминаем методы помеченные аннотацией Log
+        Arrays.stream(myInterface.getMethods())
+                .filter(method -> method.isAnnotationPresent(Log.class))
+                .forEach(m -> methodsToLog.add(m));
+
+
+        return (T) Proxy.newProxyInstance(Ioc.class.getClassLoader(), new Class<?>[]{myInterface},
+                handler);
     }
 
     static class DemoInvocationHandler implements InvocationHandler {
-        private final TestLoggingInterface myClass;
+        private final Class<?> myClass;
 
-        DemoInvocationHandler(TestLoggingInterface myClass) {
-            this.myClass = myClass;
-            Arrays.stream(myClass.getClass().getDeclaredMethods()).forEach(method -> {
-                try {
-                    if (myClass.getClass().getMethod(method.getName(), method.getParameterTypes()).isAnnotationPresent(Log.class)) {
-                        methodsToLog.add(method);
-                    }
-                } catch (NoSuchMethodException e) {
-                    throw new RuntimeException(e);
-                }
-            });
+        DemoInvocationHandler(Class<?> myInterface) {
+            this.myClass = myInterface; // не понимаю как вызвать реализацию интерфейса (инстанс).
+            //  откуда мы будем знать какая реализация требуется?
+            //Class.forName(myInterface.getName().replace("Interface", ""));
         }
 
         @Override
-        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            methodsToLog.forEach(methotToLog->{
-                if(methotToLog.getName().equals(method.getName()) && methotToLog.getParameterTypes().length == method.getParameterTypes().length){
-                    String paramsString =
-                            Arrays.stream(args).map(Object::toString).collect(Collectors.joining(", "));
-                    try {
-                        if (myClass.getClass().getMethod(method.getName(), method.getParameterTypes()).isAnnotationPresent(Log.class)) {
-                            logger.info("executing method: {}, params: {}", method.getName(), paramsString);
-                        }
-                    } catch (NoSuchMethodException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            });
+        public Object invoke(Object proxy, Method method, Object[] args) throws InvocationTargetException, IllegalAccessException {
+
+            if (methodsToLog.contains(method)) {
+                logMethod(method.getName(), args);
+
+            }
             return method.invoke(myClass, args);
         }
+
+
+    }
+
+    private static void logMethod(String methodName, Object... args) {
+        String paramsString =
+                Arrays.stream(args).map(Object::toString).collect(Collectors.joining(", "));
+        logger.info("executing method: {}, params: {}", methodName, paramsString);
     }
 }
+
+
