@@ -3,6 +3,7 @@ include("hw01-gradle")
 include("L03-generics")
 include("L06-annotations")
 include("L08-gc")
+include("L12-solid")
 
 pluginManagement {
     val jgitver: String by settings
@@ -25,3 +26,4 @@ pluginManagement {
         id("com.diffplug.spotless") version spotless
     }
 }
+include("L12-solid")
