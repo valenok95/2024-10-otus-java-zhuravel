@@ -17,7 +17,7 @@ public interface MoneyStorage {
    *
    * @param withdrawalMoney количество купюр к списанию.
    */
-  void withdrawMoney(Map<Banknote, Integer> withdrawalMoney);
+  Map<Banknote, Integer> withdrawMoney(Map<Banknote, Integer> withdrawalMoney);
 
   Map<Banknote, Integer> getFullBalance();
 }

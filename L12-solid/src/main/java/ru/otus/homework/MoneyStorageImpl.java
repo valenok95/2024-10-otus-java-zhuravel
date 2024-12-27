@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class MoneyStorageImpl implements MoneyStorage {
-  private Map<Banknote, Integer> balance;
+  private final Map<Banknote, Integer> balance;
 
   public MoneyStorageImpl(Map<Banknote, Integer> balance) {
     this.balance = balance;
@@ -25,9 +25,10 @@ public class MoneyStorageImpl implements MoneyStorage {
    * Списываем купюры из хранилища купюр.
    *
    * @param withdrawalMoney количество купюр к списанию.
+   * @return набор наличных.
    */
   @Override
-  public void withdrawMoney(Map<Banknote, Integer> withdrawalMoney) {
+  public Map<Banknote, Integer> withdrawMoney(Map<Banknote, Integer> withdrawalMoney) {
     withdrawalMoney.forEach(
         (nominal, count) -> {
           if (count > balance.get(nominal)) {
@@ -35,6 +36,7 @@ public class MoneyStorageImpl implements MoneyStorage {
           }
           balance.put(nominal, balance.get(nominal) - count);
         });
+    return withdrawalMoney;
   }
 
   @Override

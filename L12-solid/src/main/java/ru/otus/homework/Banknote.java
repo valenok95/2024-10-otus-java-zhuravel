@@ -1,8 +1,10 @@
 package ru.otus.homework;
 
-import java.util.HashMap;
+public enum Banknote {
+  ONE_THOUSAND(1000),
+  FIVE_HUNDRED(500),
+  ONE_HUNDRED(100);
 
-public abstract class Banknote {
   private final int nominal;
 
   Banknote(int nominal) {
@@ -11,18 +13,5 @@ public abstract class Banknote {
 
   public int getNominal() {
     return nominal;
-  }
-
-  @Override
-  public int hashCode() {
-    return nominal;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (obj instanceof Banknote) {
-      return ((Banknote) obj).getNominal() == nominal;
-    }
-    return false;
   }
 }
